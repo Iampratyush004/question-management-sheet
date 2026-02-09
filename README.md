@@ -20,7 +20,7 @@ Single-page React app to manage a hierarchy of:
 - Export JSON and shareable-sheet links
 - Progress indicators at sheet and topic levels
 - Dark mode toggle
-- Automatic sheet bootstrap from Codolio API (no manual trigger)
+- Initial state populated from the provided sample sheet dataset
 - Local CRUD state management with Zustand
 
 

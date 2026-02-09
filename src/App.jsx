@@ -62,7 +62,23 @@ const getSheetCounts = (topics) =>
     ]),
   );
 
-const getProgressPercent = (done, total) => (total ? Math.round((done / total) * 100) : 0);
+const getProgressPercent = (done, total) => (total ? (done / total) * 100 : 0);
+
+const getProgressFillPercent = (done, total) => {
+  if (!total || done <= 0) {
+    return 0;
+  }
+
+  return Math.max((done / total) * 100, 1);
+};
+
+const formatProgressPercent = (percent) => {
+  if (percent > 0 && percent < 1) {
+    return '<1';
+  }
+
+  return String(Math.round(percent));
+};
 
 const filterSheet = (sheet, searchTerm, statusFilter) => {
   const query = searchTerm.trim().toLowerCase();
@@ -150,6 +166,7 @@ const Stats = ({ topics }) => {
 
   const questionCounts = getSheetCounts(topics);
   const completionPercent = getProgressPercent(questionCounts.done, questionCounts.total);
+  const completionFillPercent = getProgressFillPercent(questionCounts.done, questionCounts.total);
 
   return (
     <div className="stats-grid">
@@ -171,9 +188,9 @@ const Stats = ({ topics }) => {
       </div>
       <div className="stat-card stat-card-wide">
         <span className="stat-label">Completion</span>
-        <strong className="stat-value">{completionPercent}%</strong>
+        <strong className="stat-value">{formatProgressPercent(completionPercent)}%</strong>
         <div className="progress-track">
-          <div className="progress-fill" style={{ width: `${completionPercent}%` }} />
+          <div className="progress-fill" style={{ width: `${completionFillPercent}%` }} />
         </div>
         <p className="progress-subtext">
           Revision: {questionCounts.revision} | Marked: {questionCounts.marked}
@@ -742,7 +759,7 @@ function App() {
           const isCollapsed = collapsedTopics[topic.id];
           const sourceTopic = sheet.topics.find((item) => item.id === topic.id) || topic;
           const topicCounts = getQuestionCounts(getTopicQuestions(sourceTopic));
-          const topicCompletion = getProgressPercent(topicCounts.done, topicCounts.total);
+          const topicCompletionFill = getProgressFillPercent(topicCounts.done, topicCounts.total);
 
           return (
             <article
@@ -776,7 +793,7 @@ function App() {
                       {topicCounts.done}/{topicCounts.total} done
                     </span>
                     <div className="progress-track progress-track-small">
-                      <div className="progress-fill" style={{ width: `${topicCompletion}%` }} />
+                      <div className="progress-fill" style={{ width: `${topicCompletionFill}%` }} />
                     </div>
                   </div>
                 </div>
